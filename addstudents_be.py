@@ -1,22 +1,16 @@
-import pandas as pd
-import mysql.connector
+"""Command-line helper to import a CSV or Excel student list."""
+import argparse
 
-conn = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='',
-    database='equiseat'
-)
-cursor = conn.cursor()
+import arrange_algo
 
 
-excel_data = pd.read_excel('Book1.xlsx')
+def main():
+    parser = argparse.ArgumentParser(description="Import students into EquiSeat.")
+    parser.add_argument("file", help="CSV, XLSX or XLS file with regd_no, name and section columns")
+    args = parser.parse_args()
+    count = arrange_algo.import_students(args.file)
+    print(f"Imported {count} student record(s).")
 
-for index, row in excel_data.iterrows():
-    query = "INSERT INTO students(regd_no,name,section) VALUES (%s, %s, %s)"
-    values = (row['regd_no'], row['name'], row['section']) 
-    cursor.execute(query, values)
 
-conn.commit()
-cursor.close()
-conn.close()
+if __name__ == "__main__":
+    main()
