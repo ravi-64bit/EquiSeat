@@ -112,8 +112,15 @@ CSV and Excel imports must include these column headings:
 
 Each row represents one student. Subject registrations are added separately on the Subjects & Registrations page. To generate a seating plan, students must have at least one exam registration.
 
+## Run the tests
+
+```bash
+python -m unittest discover -s tests -v
+```
+
 ## Notes
 
+- Run this development app on your own machine or a trusted private network only. It does not yet include user accounts, role permissions or CSRF protection, so it is not ready for public internet deployment.
 - The seating generator places students with no shared registered subject next to one another where possible. If the constraints cannot all be satisfied, it still fills the available seats and checks room capacity.
 - Keep the database credentials in environment variables; do not commit real passwords.
 - `main.py` is the old experimental desktop interface. The maintained application entry point is `app.py`.

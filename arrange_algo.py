@@ -44,6 +44,9 @@ def add_student(name, section, regd_no):
     conn = get_connection()
     try:
         cur = conn.cursor()
+        cur.execute("SELECT 1 FROM student_data WHERE regd_no = %s LIMIT 1", (regd_no,))
+        if cur.fetchone():
+            raise ValueError(f"Registration number {regd_no} already exists.")
         cur.execute(
             "INSERT INTO student_data (regd_no, name, section) VALUES (%s, %s, %s)",
             (regd_no, name, section),
@@ -79,6 +82,18 @@ def add_exam(regd_no, sub_code):
     conn = get_connection()
     try:
         cur = conn.cursor()
+        cur.execute("SELECT 1 FROM student_data WHERE regd_no = %s LIMIT 1", (regd_no,))
+        if not cur.fetchone():
+            raise ValueError(f"Student {regd_no} was not found. Add the student first.")
+        cur.execute("SELECT 1 FROM subjects WHERE sub_code = %s LIMIT 1", (sub_code,))
+        if not cur.fetchone():
+            raise ValueError(f"Subject {sub_code} was not found. Add the subject first.")
+        cur.execute(
+            "SELECT 1 FROM exams WHERE regd_no = %s AND sub_code = %s LIMIT 1",
+            (regd_no, sub_code),
+        )
+        if cur.fetchone():
+            raise ValueError("This student is already registered for that subject.")
         cur.execute(
             "INSERT INTO exams (regd_no, sub_code) VALUES (%s, %s)",
             (regd_no, sub_code),
